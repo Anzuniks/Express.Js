@@ -1,0 +1,26 @@
+### Testataan kissan lisäys ja kuvan lataus
+POST http://localhost:3000/api/v1/cats
+Content-Type: multipart/form-data; boundary=RajaAita
+
+--RajaAita
+Content-Disposition: form-data; name="cat_name"
+
+Simo
+--RajaAita
+Content-Disposition: form-data; name="weight"
+
+5
+--RajaAita
+Content-Disposition: form-data; name="owner"
+
+123
+--RajaAita
+Content-Disposition: form-data; name="birthdate"
+
+2024-01-01
+--RajaAita
+Content-Disposition: form-data; name="cat"; filename="kissa.jpg"
+Content-Type: image/jpeg
+
+< ./kissa.jpg
+--RajaAita--
