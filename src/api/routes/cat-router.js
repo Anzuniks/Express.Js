@@ -14,7 +14,7 @@ const catRouter = express.Router();
 
 catRouter.route('/')
   .get(getCat)
-  .post(upload.single('cat'), createThumbnail, postCat); // Nyt tämä toimii!
+  .post(upload.single('cat'), postCat);
 
 catRouter.route('/:id')
   .get(getCatById)
