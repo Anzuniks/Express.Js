@@ -1,17 +1,17 @@
 import express from 'express';
-import {
-    getUser,
-    getUserById,
-    postUser,
-    putUser,
-    deleteUser
-    } from '../controllers/user-controller.js';
+import { getUsers, getUser, postUser, putUser, deleteUser } from '../controllers/user-controller.js';
 
-    const userRouter = express.Router();
+const userRouter = express.Router();
 
-    userRouter.route('/').get(getUser).post(postUser);
-    userRouter.route('/:id').get(getUserById).put(putUser).delete(deleteUser);
+// Tämä vastaa osoitetta /api/users
+userRouter.route('/')
+  .get(getUsers)
+  .post(postUser);
 
-    export default userRouter;
+// Tämä vastaa osoitetta /api/users/:id
+userRouter.route('/:id')
+  .get(getUser)
+  .put(putUser)
+  .delete(deleteUser);
 
-    
+export default userRouter;

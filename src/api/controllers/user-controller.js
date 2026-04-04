@@ -1,12 +1,14 @@
-import { addUser,  findUserById, listAllUsers } from "../models/user-model.js";
+import { addUser, findUserById, listAllUsers } from "../models/user-model.js";
 
-const getUser = (req, res) => 
-    res.json(listAllUsers());
+// 1. Lisätään 'async' ja 'await', muuten saat vain tyhjiä vastauksia
+const getUsers = async (req, res) => {
+    const users = await listAllUsers();
+    res.json(users);
+};
 
-
-
-const getUserById = (req, res) => {
-    const user = findUserById(req.params.id);
+// 2. Nimetään tämä 'getUser', jotta se täsmää reitittimen kanssa
+const getUser = async (req, res) => {
+    const user = await findUserById(req.params.id);
     if (user) {
         res.json(user);
     } else {
@@ -14,15 +16,15 @@ const getUserById = (req, res) => {
     }
 };
 
-const postUser = (req, res) => {
-    const result = addUser(req.body);
-    if (result.user_id) {
+const postUser = async (req, res) => {
+    // Muista odottaa (await) tietokannan vastausta tässäkin
+    const result = await addUser(req.body);
+    if (result && result.user_id) {
         res.status(201).json({message: 'User added successfully', result});
     } else {
         res.sendStatus(400);
     }
 };
-
 
 const putUser = (req, res) => {
     res.json({message: 'User item updated successfully'});
@@ -32,5 +34,5 @@ const deleteUser = (req, res) => {
     res.json({message: 'User item deleted successfully'});
 };
 
-export {getUser, getUserById, postUser, putUser, deleteUser};
-
+// 3. Exportataan nimet, joita routerisi odottaa
+export {getUsers, getUser, postUser, putUser, deleteUser};

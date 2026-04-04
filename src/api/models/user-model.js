@@ -1,45 +1,26 @@
-const userItems = [
-  {
-    user_id: 3609,
-    name: 'John Doe',
-    username: 'johndoe',
-    email: 'john@metropolia.fi',
-    role: 'user',
-    password: 'password',
-  },
-  {
-    user_id: 3610,
-    name: 'Jane Smith',
-    username: 'janesmith',
-    email: 'jane@metropolia.fi',
-    role: 'admin',
-    password: 'password123',
-  },
-];
+import promisePool from '../../utils/database.js';
 
-const listAllUsers = () => userItems;
-
-const findUserById = (id) => {
-  const numericId = Number(id);
-  return userItems.find((item) => item.user_id === numericId);
+const listAllUsers = async () => {
+  const [rows] = await promisePool.query('SELECT user_id, name, email FROM wsk_users');
+  return rows;
 };
 
-const addUser = (user) => {
-  const {name, username, email, role, password} = user;
-  const newId = userItems.length > 0
-    ? Math.max(...userItems.map((item) => item.user_id)) + 1
-    : 1;
-
-  userItems.unshift({
-    user_id: newId,
-    name,
-    username,
-    email,
-    role,
-    password,
-  });
-
-  return {user_id: newId};
+const findUserById = async (id) => {
+  const [rows] = await promisePool.execute(
+    'SELECT user_id, name, email FROM wsk_users WHERE user_id = ?', 
+    [id]
+  );
+  if (rows.length === 0) return false;
+  return rows[0];
 };
 
-export {listAllUsers, findUserById, addUser};
+const addUser = async (user) => {
+  const { name, email, password } = user;
+  const sql = `INSERT INTO wsk_users (name, email, password) VALUES (?, ?, ?)`;
+  const params = [name, email, password];
+  const [result] = await promisePool.execute(sql, params);
+  return { user_id: result.insertId };
+};
+
+// TÄMÄ on se kohta, jota controlleri lukee:
+export { listAllUsers, findUserById, addUser };

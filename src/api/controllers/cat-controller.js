@@ -1,47 +1,35 @@
-import {addCat, findCatById, listAllCats} from '../models/cat-model.js';
+import { listAllCats, findCatById, addCat } from '../models/cat-model.js';
 
-const getCat = (req, res) => res.json(listAllCats());
-
-const getCatById = (req, res) => {
-    const cat = findCatById(req.params.id);
-    if (cat) {
-        res.json(cat);
-    } else {
-        res.sendStatus(404);
-    }
+const getCats = async (req, res) => {
+  const cats = await listAllCats();
+  res.json(cats);
 };
 
+const getCat = async (req, res) => {
+  const cat = await findCatById(req.params.id);
+  if (cat) {
+    res.json(cat);
+  } else {
+    res.sendStatus(404);
+  }
+};
 
-
-
-
-
-const postCat = (req, res) => {
-  console.log('Form data (req.body):', req.body);
-  console.log('File data (req.file):', req.file);
-
-
-
-  const filename = req.file ? req.file.filename : 'default.png';
-const result = addCat(req.body, filename);
-
-
-if (result.cat_id) {
-    res.status(201).json({ message: 'Cat added successfully', result });
+const postCat = async (req, res) => {
+  // Huom! Tässä pitää olla ne tiedot, joita tietokanta odottaa
+  const { cat_name, weight, owner, birthdate } = req.body;
+  const filename = req.file ? req.file.filename : 'default.jpg';
+  
+  const result = await addCat({ cat_name, weight, owner, filename, birthdate });
+  if (result) {
+    res.status(201).json({ message: 'Kissa lisätty', id: result.cat_id });
   } else {
     res.sendStatus(400);
   }
 };
 
+// Voit lisätä nämä myöhemmin, mutta määritellään ne nyt, jotta router ei kaadu
+const putCat = (req, res) => res.send('Kissa päivitetty (not implemented)');
+const deleteCat = (req, res) => res.send('Kissa poistettu (not implemented)');
 
-
-const putCat = (req, res) => {
-    res.json({message: 'Cat item updated successfully'});
-};
-
-const deleteCat = (req, res) => {
-    res.json({message: 'Cat item deleted successfully'});
-};
-
-export {getCat, getCatById, postCat, putCat, deleteCat};
-
+// TÄMÄ ON TÄRKEÄ: Nimien on oltava samat kuin routerin importissa!
+export { getCats, getCat, postCat, putCat, deleteCat };

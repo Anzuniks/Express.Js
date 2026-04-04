@@ -1,46 +1,33 @@
-// mock data
-const catItems = [
-  {
-    cat_id: 9592,
-    cat_name: 'Frank',
-    weight: 11,
-    owner: 3609,
-    filename: 'f3dbafakjsdfhg4',
-    birthdate: '2021-10-12',
-  },
-  {
-    cat_id: 9590,
-    cat_name: 'Mittens',
-    weight: 8,
-    owner: 3602,
-    filename: 'f3dasdfkjsdfhgasdf',
-    birthdate: '2021-10-12',
-  },
-];
+import promisePool from '../../utils/database.js';
 
-const listAllCats = () => {
-  return catItems;
+const listAllCats = async () => {
+  // JOIN hakee kissan tiedot JA omistajan nimen wsk_users-taulusta
+  const [rows] = await promisePool.query(`
+    SELECT wsk_cats.*, wsk_users.name AS owner_name 
+    FROM wsk_cats 
+    JOIN wsk_users ON wsk_cats.owner = wsk_users.user_id
+  `);
+  return rows;
 };
 
-const findCatById = (id) => {
-  return catItems.find((item) => item.cat_id == id);
-};
-
-const addCat = (cat, filename) => {
-  const { cat_name, weight, owner, birthdate } = cat;
-  const newId = catItems.length > 0 ? catItems[0].cat_id + 1 : 1;
+const findCatById = async (id) => {
+  const [rows] = await promisePool.execute(`
+    SELECT wsk_cats.*, wsk_users.name AS owner_name 
+    FROM wsk_cats 
+    JOIN wsk_users ON wsk_cats.owner = wsk_users.user_id 
+    WHERE cat_id = ?`, [id]);
   
-  const newCat = {
-    cat_id: newId,
-    cat_name,
-    weight,
-    owner,
-    filename: filename, // Tässä tallennetaan Multerin luoma nimi
-    birthdate,
-  };
+  if (rows.length === 0) return false;
+  return rows[0];
+};
 
-  catItems.unshift(newCat);
-  return { cat_id: newId };
+const addCat = async (cat) => {
+  const { cat_name, weight, owner, filename, birthdate } = cat;
+  const sql = `INSERT INTO wsk_cats (cat_name, weight, owner, filename, birthdate)
+               VALUES (?, ?, ?, ?, ?)`;
+  const params = [cat_name, weight, owner, filename, birthdate];
+  const [result] = await promisePool.execute(sql, params);
+  return { cat_id: result.insertId };
 };
 
 export { listAllCats, findCatById, addCat };

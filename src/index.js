@@ -1,8 +1,14 @@
 import app from './app.js';
+import catRouter from './api/routes/cat-router.js';
+import userRouter from './api/routes/user-router.js';
 
-const hostname = '127.0.0.1';
 const port = 3000;
 
-app.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
+// Reitit (Routes) - nämä pitää olla ennen app.listenia
+app.use('/api/cats', catRouter);
+app.use('/api/users', userRouter);
+
+// Käynnistetään palvelin
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}/`);
 });
