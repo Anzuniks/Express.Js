@@ -1,0 +1,17 @@
+{
+  "name": "Express.js Cats API",
+  "version": "1.0.0",
+  "description": "API documentation for authentication, users and cats endpoints",
+  "title": "Cats API Documentation",
+  "url": "/api/v1",
+  "header": {
+    "title": "Cats API",
+    "content": "<p>REST API docs generated with APIDoc.</p>"
+  },
+  "template": {
+    "withCompare": true,
+    "withGenerator": true
+  },
+  "exclude": ["node_modules/", "uploads/", "docs/"],
+  "files": ["src/api/apidoc/**/*.js"]
+}

@@ -14,6 +14,7 @@ app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 
 app.use('/uploads', express.static('uploads'));
+app.use('/docs', express.static('docs'));
 
 // Yhdistetään kaikki API-reitit /api/v1 -alkuosan alle
 app.use('/api/v1', api);
