@@ -1,26 +1,45 @@
-### Testataan kissan lisäys ja kuvan lataus
-POST http://localhost:3000/api/v1/cats
-Content-Type: multipart/form-data; boundary=RajaAita
+### 1. Luo uusi käyttäjä
+POST http://localhost:3000/api/v1/users
+Content-Type: application/json
 
---RajaAita
-Content-Disposition: form-data; name="cat_name"
+{
+  "name": "John Doe",
+  "username": "JohnDoe",
+  "email": "kalle@metropolia.fi",
+  "password": "salainen-salasana"
+}
 
-Simo
---RajaAita
-Content-Disposition: form-data; name="weight"
+### 2. Kirjaudu sisään
+POST http://localhost:3000/api/v1/auth/login
+Content-Type: application/json
 
-5
---RajaAita
-Content-Disposition: form-data; name="owner"
+{
+  "username": "JohnDoe",
+  "password": "salainen-salasana"
+}
 
-123
---RajaAita
-Content-Disposition: form-data; name="birthdate"
+@token = <paste-token-here>
 
-2024-01-01
---RajaAita
-Content-Disposition: form-data; name="cat"; filename="kissa.jpg"
-Content-Type: image/jpeg
+### 3. Hae oma profiili tokenilla
+GET http://localhost:3000/api/v1/auth/me
+Authorization: Bearer {{token}}
 
-< ./kissa.jpg
---RajaAita--
+### 4. Paivita oma kayttaja (vaihda id omaan user_id:hen)
+PUT http://localhost:3000/api/v1/users/39
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "John Doe Updated"
+}
+
+### 5. Yrita paivittaa toisen kissa (pitaisi palauttaa 403, jos et ole owner/admin)
+PUT http://localhost:3000/api/v1/cats/41
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "cat_name": "Not allowed",
+  "weight": 3.2
+}
+
