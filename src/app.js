@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import api from './api/index.js';
+import { notFoundHandler, errorHandler } from './middlewares/error-handlers.js';
 
 const app = express();
 
@@ -18,5 +19,8 @@ app.use('/uploads', express.static('uploads'));
 app.use('/api/v1', api);
 
 app.get('/test', (req, res) => res.send('Palvelin vastaa!'));
+
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 export default app;

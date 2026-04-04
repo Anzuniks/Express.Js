@@ -43,3 +43,57 @@ Authorization: Bearer {{token}}
   "weight": 3.2
 }
 
+### 6. Error handler testi: tyhja user body (pitaisi palauttaa JSON error 400)
+POST http://localhost:3000/api/v1/users
+Content-Type: application/json
+
+{}
+
+### 7. Luo kissa multipartina (kentan nimi on file)
+POST http://localhost:3000/api/v1/cats
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="cat_name"
+
+TestiKissa
+--WebAppBoundary
+Content-Disposition: form-data; name="weight"
+
+3.4
+--WebAppBoundary
+Content-Disposition: form-data; name="birthdate"
+
+2020-01-01
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="cat.jpg"
+Content-Type: image/jpeg
+
+< ./public/cat.jpg
+--WebAppBoundary--
+
+### 8. Error handler testi: virheellinen tiedostotyyppi (pitaisi palauttaa JSON error 400)
+POST http://localhost:3000/api/v1/cats
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="cat_name"
+
+BadFileCat
+--WebAppBoundary
+Content-Disposition: form-data; name="weight"
+
+3.1
+--WebAppBoundary
+Content-Disposition: form-data; name="birthdate"
+
+2020-01-01
+--WebAppBoundary
+Content-Disposition: form-data; name="file"; filename="note.txt"
+Content-Type: text/plain
+
+< ./README.md
+--WebAppBoundary--
+
