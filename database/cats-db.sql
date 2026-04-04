@@ -1,3 +1,11 @@
+CREATE DATABASE IF NOT EXISTS `kissatietokanta`;
+USE `kissatietokanta`;
+
+-- Requires admin rights. This creates the app user expected by .env.
+CREATE USER IF NOT EXISTS 'wskcats'@'localhost' IDENTIFIED BY 'wskpass';
+GRANT ALL PRIVILEGES ON `kissatietokanta`.* TO 'wskcats'@'localhost';
+FLUSH PRIVILEGES;
+
 CREATE TABLE `wsk_cats` (
   `cat_id` int(11) NOT NULL,
   `cat_name` text NOT NULL,

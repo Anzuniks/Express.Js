@@ -1,17 +1,16 @@
 import express from 'express';
 import { getUsers, getUser, postUser, putUser, deleteUser } from '../controllers/user-controller.js';
+import { authenticateToken } from '../../middlewares/authentication.js';
 
 const userRouter = express.Router();
 
-// Tämä vastaa osoitetta /api/users
 userRouter.route('/')
   .get(getUsers)
   .post(postUser);
 
-// Tämä vastaa osoitetta /api/users/:id
 userRouter.route('/:id')
   .get(getUser)
-  .put(putUser)
-  .delete(deleteUser);
+  .put(authenticateToken, putUser)
+  .delete(authenticateToken, deleteUser);
 
 export default userRouter;
